@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: api-gateway
+  name: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+          image: IMAGE_URL/api-gateway:latest
+          name: api-gateway
+          ports:
+            - containerPort: 9761
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: api-gateway
+  name: api-gateway
+spec:
+  type: LoadBalancer
+  ports:
+    - name: "9761"
+      port: 9761
+      targetPort: 9761
+  selector:
+    app: api-gateway
+
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: api-gateway-ingress
+#   annotations:
+#     kubernetes.io/ingress.class: nginx
+#     nginx.ingress.kubernetes.io/user-regex: "true"
+#     nginx.ingress.kubernetes.io/limit-connections: '5'
+#     nginx.ingress.kubernetes.io/limit-rps: '2'
+#     nginx.ingress.kubernetes.io/limit-rpm: '20'
+# spec:
+#   rules:
+#     - host: api-gateway.com
+#       http:
+#         paths:
+#         - path: /
+#           pathType: Prefix
+#           backend:
+#             service:
+#               name: api-gateway
+#               port:
+#                 number: 9761
+

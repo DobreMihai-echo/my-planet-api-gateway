@@ -1,0 +1,11 @@
+server:
+  port: 9763
+
+logging:
+  level:
+    root: info
+
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://service-discovery:8761/eureka

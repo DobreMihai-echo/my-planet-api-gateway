@@ -1,0 +1,43 @@
+server:
+  port: 9761
+
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTION
+            allowedHeaders:
+              - authorization
+              - content-type
+              - x-requested-with
+              - cache-control
+              - x-xsrf-token
+              - accept
+              - origin
+              - x-file-name
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: user-service
+          uri: http://user-service
+          predicates:
+            - Path=/api/users/**, /api/auth/**
+        - id: events-service
+          uri: http://events-service
+          predicates:
+            - Path=/events/**
+          filters:
+            - StripPrefix=1
